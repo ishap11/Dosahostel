@@ -38,6 +38,7 @@ func StudentRegistration(c *gin.Context) {
 		return
 	}
 	student.Password = string(hashedPassword)
+	student.UserType = "student"
 
 	userStudent := models.Student{
 		FullName:       student.FullName,
@@ -47,6 +48,7 @@ func StudentRegistration(c *gin.Context) {
 		Room:           student.Room,
 		Password:       student.Password,
 		HostelName:     student.HostelName,
+		UserType:       student.UserType,
 	}
 	if err := database.Create(&userStudent).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -52,6 +52,7 @@ type Student struct {
 	HostelName     string `gorm:"not null" json:"hostel_name"`
 	Room           string `gorm:"not null" json:"room"`
 	ContactDetails string `gorm:"not null" json:"contact_details"`
+	UserType       string
 }
 
 // Warden struct for representing a warden in the hostel
@@ -62,6 +63,7 @@ type Warden struct {
 	Password       string `gorm:"not null" json:"password"`
 	HostelName     string `gorm:"not null" json:"hostel_name"`
 	ContactDetails string `gorm:"not null" json:"contact_details"`
+	UserType       string
 }
 
 type ComplaintType string
