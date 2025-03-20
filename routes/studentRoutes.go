@@ -8,4 +8,5 @@ import (
 
 func StudentRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.POST("/student/register", controllers.StudentRegistration)
+	incomingRoutes.GET("/student/login", controllers.StudentLogin)
 }

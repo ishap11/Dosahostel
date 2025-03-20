@@ -9,13 +9,13 @@ import (
 
 var jwtSecret = []byte("JWT123")
 
-func GenerateStudentJWT(userID int, userType string, blockID uint) (string, error) {
+func GenerateStudentJWT(userID int, blockID string, regNo string) (string, error) {
 	// Create a new JWT token with user payload
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["user"] = map[string]interface{}{
 		"user_id":  userID,
-		"type":     userType,
+		"reg_no":   regNo,
 		"block_id": blockID,
 	}
 	claims["exp"] = time.Now().Add(time.Hour).Unix()
