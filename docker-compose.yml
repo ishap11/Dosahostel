@@ -1,0 +1,57 @@
+networks:
+  ecommerce_network:
+    driver: bridge
+
+services:
+  big_boys-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: big_boys_hostel
+      POSTGRES_PASSWORD: big_boys_hostel_password
+      POSTGRES_DB: Big_Boys_db
+    volumes:
+      - big_boys_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - ecommerce_network
+
+  boys_one-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: boys_user
+      POSTGRES_PASSWORD: boys_password
+      POSTGRES_DB: boys_db
+    volumes:
+      - boys_one_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - ecommerce_network
+
+  auth-service:
+    build:
+      context: ./service/authService
+    environment:
+      - DB_BIG_BOYS_USER=big_boys_hostel
+      - DB_BIG_BOYS_PASSWORD=big_boys_hostel_password
+      - DB_BIG_BOYS_HOST=big_boys-db  # ✅ Corrected
+      - DB_BIG_BOYS_PORT=5432
+      - DB_BIG_BOYS_NAME=Big_Boys_db
+
+      - DB_BOYS_ONE_USER=boys_user
+      - DB_BOYS_ONE_PASSWORD=boys_password
+      - DB_BOYS_ONE_HOST=boys_one-db  # ✅ Corrected
+      - DB_BOYS_ONE_PORT=5432
+      - DB_BOYS_ONE_NAME=boys_db
+    depends_on:
+      - big_boys-db
+      - boys_one-db
+    ports:
+      - "8001:8001"
+    networks:
+      - ecommerce_network
+
+volumes:
+  big_boys_postgres_data:
+  boys_one_postgres_data:
