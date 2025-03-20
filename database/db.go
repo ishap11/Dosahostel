@@ -174,48 +174,42 @@ func InitDB() {
 	// Print successful connection messages
 	fmt.Println("Big Boys and Boys One Database connections successful")
 
-	// Perform AutoMigration for Big Boys DB
+	migrateBigBoysDB()
+	migrateBoysOneDB()
+}
+
+func migrateBigBoysDB() {
+	// First, migrate the Block table
 	err = bigBoysDB.AutoMigrate(&models.Block{})
 	if err != nil {
-		log.Fatalf("error migrating models (block) for Big Boys DB: %v", err)
+		log.Fatalf("Error migrating Block table: %v", err)
 	}
 
-	err = bigBoysDB.AutoMigrate(&models.Student{})
+	// Then, migrate other tables after Block table is confirmed to exist
+	err = bigBoysDB.AutoMigrate(&models.Student{}, &models.Warden{})
 	if err != nil {
-		log.Fatalf("error migrating models (students) for Big Boys DB: %v", err)
-	}
-
-	err = bigBoysDB.AutoMigrate(&models.Warden{})
-	if err != nil {
-		log.Fatalf("error migrating models (wardens) for Big Boys DB: %v", err)
+		log.Fatalf("Error migrating models (students, wardens): %v", err)
 	}
 
 	err = bigBoysDB.AutoMigrate(&models.User{})
 	if err != nil {
-		log.Fatalf("error migrating models (user) for Big Boys DB: %v", err)
+		log.Fatalf("Error migrating models (user): %v", err)
 	}
 
-	// Perform AutoMigration for Boys One DB
+	fmt.Println("Big Boys Database migrations completed successfully")
+}
+
+// Boys One DB migrations
+func migrateBoysOneDB() {
 	err = boysOneDB.AutoMigrate(&models.Block{})
 	if err != nil {
-		log.Fatalf("error migrating models (block) for Boys One DB: %v", err)
+		log.Fatalf("Error migrating models (block): %v", err)
 	}
 
-	err = boysOneDB.AutoMigrate(&models.Student{})
+	err = boysOneDB.AutoMigrate(&models.Student{}, &models.Warden{}, &models.User{})
 	if err != nil {
-		log.Fatalf("error migrating models (students) for Boys One DB: %v", err)
+		log.Fatalf("Error migrating models (students, wardens, user): %v", err)
 	}
 
-	err = boysOneDB.AutoMigrate(&models.Warden{})
-	if err != nil {
-		log.Fatalf("error migrating models (wardens) for Boys One DB: %v", err)
-	}
-
-	err = boysOneDB.AutoMigrate(&models.User{})
-	if err != nil {
-		log.Fatalf("error migrating models (user) for Boys One DB: %v", err)
-	}
-
-	// Print successful migration messages
-	fmt.Println("Big Boys and Boys One Database connections successful and tables migrated")
+	fmt.Println("Boys One Database migrations completed successfully")
 }
