@@ -179,13 +179,18 @@ func InitDB() {
 }
 
 func migrateBigBoysDB() {
-	// First, migrate the Block table
-	err = bigBoysDB.AutoMigrate(&models.Block{})
-	if err != nil {
-		log.Fatalf("Error migrating Block table: %v", err)
+	// Manually check if the "blocks" table exists
+	var count int64
+	err := bigBoysDB.Raw("SELECT count(*) FROM information_schema.tables WHERE table_name = 'blocks'").Scan(&count).Error
+	if err != nil || count == 0 {
+		// "blocks" table doesn't exist, so create it manually
+		err = bigBoysDB.AutoMigrate(&models.Block{})
+		if err != nil {
+			log.Fatalf("Error migrating Block table: %v", err)
+		}
 	}
 
-	// Then, migrate other tables after Block table is confirmed to exist
+	// Then migrate other tables
 	err = bigBoysDB.AutoMigrate(&models.Student{}, &models.Warden{})
 	if err != nil {
 		log.Fatalf("Error migrating models (students, wardens): %v", err)

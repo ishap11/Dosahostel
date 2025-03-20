@@ -13,11 +13,8 @@ type User struct {
 }
 
 type Block struct {
-	BlockID   uint      `gorm:"primaryKey" json:"block_id"`
-	BlockName string    `gorm:"not null" json:"block_name"`
-	Users     []User    `gorm:"foreignKey:BlockID" json:"users"`
-	Students  []Student `gorm:"foreignKey:BlockID" json:"students"`
-	Wardens   []Warden  `gorm:"foreignKey:BlockID" json:"wardens"`
+	BlockID   uint   `gorm:"primaryKey" json:"block_id"`
+	BlockName string `gorm:"not null" json:"block_name"`
 }
 
 type Student struct {
