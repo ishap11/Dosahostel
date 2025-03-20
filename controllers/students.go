@@ -1,0 +1,57 @@
+package controllers
+
+import (
+	"net/http"
+
+	db "github.com/adityjoshi/Dosahostel/database"
+	"github.com/adityjoshi/Dosahostel/models"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+)
+
+func StudentRegistration(c *gin.Context) {
+	var student models.Student
+
+	if err := c.BindJSON(&student); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	database, err := db.GetDB(student.HostelName)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if database == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid region"})
+		return
+	}
+	var existingUser models.Student
+	if err := database.Where("email =?", student.Email).First(&existingUser).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "user already exists"})
+		return
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(student.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	student.Password = string(hashedPassword)
+
+	userStudent := models.Student{
+		FullName:       student.FullName,
+		Email:          student.Email,
+		ContactDetails: student.ContactDetails,
+		RegNo:          student.RegNo,
+		Room:           student.Room,
+		Password:       student.Password,
+		HostelName:     student.HostelName,
+	}
+	if err := database.Create(&userStudent).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User registered successfully",
+	})
+}

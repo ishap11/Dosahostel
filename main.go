@@ -6,26 +6,17 @@ import (
 	"net/http"
 
 	db "github.com/adityjoshi/Dosahostel/database"
-	"github.com/adityjoshi/Dosahostel/initiliazers"
+	"github.com/adityjoshi/Dosahostel/routes"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
-func init() {
-	initiliazers.LoadEnvVariable()
-}
-
 func main() {
-
-	if err := godotenv.Load(); err != nil {
-
-		log.Fatal("Error loading .env file")
-	}
 
 	db.InitDB()
 	fmt.Print("jai shree ram \n")
 
 	router := gin.Default()
+	setupRouter(router)
 	router.GET("/PING", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "PONG",
@@ -42,4 +33,8 @@ func main() {
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
+}
+
+func setupRouter(router *gin.Engine) {
+	routes.StudentRoutes(router)
 }

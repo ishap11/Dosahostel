@@ -2,13 +2,12 @@ package utils
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
 
-var jwtSecret = []byte(os.Getenv("JWTSECRET"))
+var jwtSecret = []byte("JWT123")
 
 func GenerateStudentJWT(userID int, userType string, blockID uint) (string, error) {
 	// Create a new JWT token with user payload
