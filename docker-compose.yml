@@ -31,7 +31,8 @@ services:
 
   auth-service:
     build:
-      context: ./service/authService
+      context: ./
+    container_name: go-app
     environment:
       - DB_BIG_BOYS_USER=big_boys_hostel
       - DB_BIG_BOYS_PASSWORD=big_boys_hostel_password
