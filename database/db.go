@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/adityjoshi/Dosahostel/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -67,4 +68,15 @@ func InitDB() {
 	}
 
 	fmt.Println("Big Boys and Boys One Database connections successful")
+
+	// Auto migrate models
+	err = bigBoysDB.AutoMigrate(&models.User{}, &models.Block{}, &models.Student{}, &models.Warden{})
+	if err != nil {
+		log.Fatalf("error migrating models : %v", err)
+	}
+	err = boysOneDB.AutoMigrate(&models.User{}, &models.Block{}, &models.Student{}, &models.Warden{})
+	if err != nil {
+		log.Fatalf("error migrating models : %v", err)
+	}
+	fmt.Println("Big Boys and Boys One Database connections successful and tables migrated")
 }
