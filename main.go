@@ -6,10 +6,21 @@ import (
 	"net/http"
 
 	db "github.com/adityjoshi/Dosahostel/database"
+	"github.com/adityjoshi/Dosahostel/initiliazers"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
+func init() {
+	initiliazers.LoadEnvVariable()
+}
+
 func main() {
+
+	if err := godotenv.Load(); err != nil {
+
+		log.Fatal("Error loading .env file")
+	}
 
 	db.InitDB()
 	fmt.Print("jai shree ram \n")
