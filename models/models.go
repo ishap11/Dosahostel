@@ -63,3 +63,21 @@ type Warden struct {
 	HostelName     string `gorm:"not null" json:"hostel_name"`
 	ContactDetails string `gorm:"not null" json:"contact_details"`
 }
+
+type ComplaintType string
+
+const (
+	Electricity ComplaintType = "electricity"
+	WiFi        ComplaintType = "wifi"
+	Hardware    ComplaintType = "hardware"
+	Others      ComplaintType = "others"
+)
+
+type Complaint struct {
+	ComplaintID   uint          `gorm:"primaryKey" json:"complaint_id"`
+	RegNo         string        `gorm:"not null" json:"reg_no"` // Foreign key to Student
+	ComplaintType ComplaintType `gorm:"type:varchar(20);not null" json:"complaint_type"`
+	Description   string        `gorm:"not null" json:"description"`
+	Status        bool          `gorm:"not null;default:false" json:"status"` // false = pending, true = resolved
+	Student       Student       `gorm:"foreignKey:RegNo;references:RegNo" json:"student"`
+}
