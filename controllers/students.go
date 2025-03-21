@@ -91,7 +91,7 @@ func StudentLogin(c *gin.Context) {
 		return
 	}
 
-	jwtToken, err := utils.GenerateStudentJWT(int(student.StudentID), student.HostelName, student.RegNo)
+	jwtToken, err := utils.GenerateStudentJWT(int(student.StudentID), student.HostelName, student.RegNo, student.UserType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate JWT token"})
 		return

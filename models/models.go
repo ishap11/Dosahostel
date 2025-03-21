@@ -76,10 +76,13 @@ const (
 )
 
 type Complaint struct {
-	ComplaintID   uint          `gorm:"primaryKey" json:"complaint_id"`
-	RegNo         string        `gorm:"not null" json:"reg_no"` // Foreign key to Student
-	ComplaintType ComplaintType `gorm:"type:varchar(20);not null" json:"complaint_type"`
-	Description   string        `gorm:"not null" json:"description"`
-	Status        bool          `gorm:"not null;default:false" json:"status"` // false = pending, true = resolved
-	Student       Student       `gorm:"foreignKey:RegNo;references:RegNo" json:"student"`
+	ComplaintID    uint          `gorm:"primaryKey" json:"complaint_id"`
+	StudentID      uint          `gorm:"" json:"student_id"`
+	RegNo          string        `gorm:"not null" json:"reg_no"` // Foreign key to Student
+	ComplaintType  ComplaintType `gorm:"type:varchar(20);not null" json:"complaint_type"`
+	Description    string        `gorm:"not null" json:"description"`
+	Status         bool          `gorm:"not null;default:false" json:"status"` // false = pending, true = resolved
+	Room           string        `gorm:"not null" json:"room"`
+	HostelName     string        `gorm:"not null" json:"hostel_name"`
+	ContactDetails string        `gorm:"not null" json:"contact_details"`
 }
