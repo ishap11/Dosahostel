@@ -36,13 +36,13 @@ services:
     environment:
       - DB_BIG_BOYS_USER=big_boys_hostel
       - DB_BIG_BOYS_PASSWORD=big_boys_hostel_password
-      - DB_BIG_BOYS_HOST=big_boys-db  # ✅ Corrected
+      - DB_BIG_BOYS_HOST=big_boys-db  
       - DB_BIG_BOYS_PORT=5432
       - DB_BIG_BOYS_NAME=Big_Boys_db
 
       - DB_BOYS_ONE_USER=boys_user
       - DB_BOYS_ONE_PASSWORD=boys_password
-      - DB_BOYS_ONE_HOST=boys_one-db  # ✅ Corrected
+      - DB_BOYS_ONE_HOST=boys_one-db  
       - DB_BOYS_ONE_PORT=5432
       - DB_BOYS_ONE_NAME=boys_db
     depends_on:
