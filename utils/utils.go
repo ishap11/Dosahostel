@@ -45,6 +45,26 @@ func GenerateStudentJWT(userID int, blockID string, regNo string, userType strin
 // 	return nil, fmt.Errorf("invalid token")
 // }
 
+// func DecodeStudentJWT(tokenString string) (map[string]interface{}, error) {
+// 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+// 		return jwtSecret, nil
+// 	})
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+// 		// ✅ Extract the "user" object correctly
+// 		userClaims, userExists := claims["user"].(map[string]interface{})
+// 		if !userExists {
+// 			return nil, fmt.Errorf("invalid token structure")
+// 		}
+// 		return claims, nil
+// 	}
+
+// 	return nil, fmt.Errorf("invalid token")
+// }
+
 func DecodeStudentJWT(tokenString string) (map[string]interface{}, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
@@ -54,12 +74,8 @@ func DecodeStudentJWT(tokenString string) (map[string]interface{}, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		// ✅ Extract the "user" object correctly
-		userClaims, userExists := claims["user"].(map[string]interface{})
-		if !userExists {
-			return nil, fmt.Errorf("invalid token structure")
-		}
-		return userClaims, nil
+		// ✅ Return full claims (not just "user")
+		return claims, nil
 	}
 
 	return nil, fmt.Errorf("invalid token")
