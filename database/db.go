@@ -78,7 +78,7 @@ func migrateBigBoysDB() {
 	// Manually check if the "blocks" table exists
 
 	// Then migrate other tables
-	err = bigBoysDB.AutoMigrate(&models.Student{}, &models.Warden{})
+	err = bigBoysDB.AutoMigrate(&models.Student{}, &models.Warden{}, models.Complaint{})
 	if err != nil {
 		log.Fatalf("Error migrating models (students, wardens): %v", err)
 	}

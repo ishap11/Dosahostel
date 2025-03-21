@@ -23,7 +23,7 @@ func AuthorizeStudent() gin.HandlerFunc {
 			return
 		}
 
-		userType, ok := claims["user"].(map[string]interface{})["type"].(string)
+		userType, ok := claims["user_type"].(map[string]interface{})["type"].(string)
 		if !ok || userType != "student" {
 			c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized for student"})
 			c.Abort()
