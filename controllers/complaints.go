@@ -23,10 +23,29 @@ func PostComplaint(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
 	}
+	userClaims, ok := claims["user"].(map[string]interface{})
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token structure"})
+		return
+	}
 
-	studentID := uint(claims["user_id"].(float64))
-	regNo := claims["reg_no"].(string)
-	blockID := claims["block_id"].(string)
+	studentID, ok := userClaims["user_id"].(float64)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user_id in token"})
+		return
+	}
+
+	regNo, ok := userClaims["reg_no"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid reg_no in token"})
+		return
+	}
+
+	blockID, ok := userClaims["block_id"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid block_id in token"})
+		return
+	}
 
 	var complaintReq struct {
 		Complaint   string `json:"complaint"`
