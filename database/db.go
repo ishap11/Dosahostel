@@ -89,7 +89,7 @@ func migrateBigBoysDB() {
 // Boys One DB migrations
 func migrateBoysOneDB() {
 
-	err = boysOneDB.AutoMigrate(&models.Student{}, &models.Warden{})
+	err = boysOneDB.AutoMigrate(&models.Student{}, &models.Warden{}, models.Complaint{})
 	if err != nil {
 		log.Fatalf("Error migrating models (students, wardens, user): %v", err)
 	}
