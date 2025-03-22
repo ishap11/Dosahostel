@@ -74,7 +74,7 @@ func (nc *BigBoysConsumer) consumeMessages(partitionConsumer sarama.PartitionCon
 func processMessage(topic string, msg *sarama.ConsumerMessage) error {
 	log.Printf("Processing message: %s \n", string(msg.Value))
 	switch topic {
-	case "hospital_admin":
+	case "BH1", "BH6":
 		log.Printf("Processing hospital_admin message: %s", string(msg.Value))
 
 		var admin database.HospitalAdmin
