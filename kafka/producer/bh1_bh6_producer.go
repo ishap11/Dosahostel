@@ -7,12 +7,12 @@ import (
 	"github.com/IBM/sarama"
 )
 
-type BigBoysHostel struct {
+type NorthProducer struct {
 	producer sarama.SyncProducer
 }
 
-// BigBoysProducer initializes and returns a new NorthProducer
-func BigBoysProducer(brokers []string) (*BigBoysHostel, error) {
+// NewNorthProducer initializes and returns a new NorthProducer
+func NewNorthProducer(brokers []string) (*NorthProducer, error) {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
@@ -23,11 +23,11 @@ func BigBoysProducer(brokers []string) (*BigBoysHostel, error) {
 		return nil, fmt.Errorf("failed to start North Kafka producer: %w", err)
 	}
 
-	return &BigBoysHostel{producer: producer}, nil
+	return &NorthProducer{producer: producer}, nil
 }
 
 // SendMessage sends a message to a specific topic in the North region
-func (p *BigBoysHostel) SendMessage(topic, message string) error {
+func (p *NorthProducer) SendMessage(topic, message string) error {
 	log.Printf("Producer received message: %s", message)
 	msg := &sarama.ProducerMessage{
 		Topic: topic,

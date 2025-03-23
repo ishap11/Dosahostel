@@ -8,25 +8,25 @@ import (
 )
 
 type KafkaManager struct {
-	BigBoysHostel *producer.BigBoysHostel
-	BoysHostel    *producer.BoysHostel
+	NorthProducer *producer.NorthProducer
+	SouthProducer *producer.SouthProducer
 }
 
 func NewKafkaManager(BigBoysBroker, BoysBroker []string) (*KafkaManager, error) {
-	BigBoysHostel, err := producer.BigBoysProducer(BigBoysBroker)
+	NorthProducer, err := producer.NewNorthProducer(BigBoysBroker)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing North producer: %w", err)
 	}
 
-	BoysHostel, err := producer.BoysProducer(BoysBroker)
+	SouthProducer, err := producer.NewSouthProducer(BoysBroker)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing North producer: %w", err)
 	}
 
 	// Return the KafkaManager instance with both producers
 	return &KafkaManager{
-		BigBoysHostel: BigBoysHostel,
-		BoysHostel:    BoysHostel,
+		NorthProducer: NorthProducer,
+		SouthProducer: SouthProducer,
 	}, nil
 }
 
@@ -34,13 +34,13 @@ func (km *KafkaManager) ComplaintRegistration(hostel, topic, messageString strin
 	var err error
 
 	switch hostel {
-	case "BH1", "BH6":
+	case "north":
 		log.Printf("Sending message to North region, topic: %s", topic)
-		err = km.BigBoysHostel.SendMessage(topic, messageString)
-	case "BH2", "BH3", "BH4", "BH5":
+		err = km.NorthProducer.SendMessage(topic, messageString)
+	case "south":
 
 		log.Printf("Sending message to South region, topic: %s", topic)
-		err = km.BoysHostel.SendMessageBoys(topic, messageString)
+		err = km.SouthProducer.SouthMessage(topic, messageString)
 	default:
 
 		return fmt.Errorf("invalid hostel: %s", hostel)

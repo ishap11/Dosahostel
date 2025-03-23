@@ -1,19 +1,18 @@
 package consumer
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
 	"github.com/IBM/sarama"
 )
 
-type BigBoysConsumer struct {
+type NorthConsumer struct {
 	Consumer sarama.Consumer
 	Topics   []string
 }
 
-func NewBigBoysConsumer(broker string, topics []string) (*BigBoysConsumer, error) {
+func NewBigBoysConsumer(broker string, topics []string) (*NorthConsumer, error) {
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 
@@ -27,10 +26,10 @@ func NewBigBoysConsumer(broker string, topics []string) (*BigBoysConsumer, error
 	log.Printf("Kafka consumer created successfully, subscribing to topics: %v", topics)
 
 	// Return a NorthConsumer instance with the list of topics
-	return &BigBoysConsumer{Consumer: consumer, Topics: topics}, nil
+	return &NorthConsumer{Consumer: consumer, Topics: topics}, nil
 }
 
-func (nc *BigBoysConsumer) Listen() {
+func (nc *NorthConsumer) Listen() {
 	defer func() {
 		if err := nc.Consumer.Close(); err != nil {
 			log.Printf("Error closing consumer: %v\n", err)
@@ -56,7 +55,7 @@ func (nc *BigBoysConsumer) Listen() {
 	select {}
 }
 
-func (nc *BigBoysConsumer) consumeMessages(partitionConsumer sarama.PartitionConsumer) {
+func (nc *NorthConsumer) consumeMessages(partitionConsumer sarama.PartitionConsumer) {
 	for msg := range partitionConsumer.Messages() {
 		// Log received message and metadata
 		log.Printf("Received message from topic %s: %s\n", msg.Topic, string(msg.Value))
@@ -77,30 +76,30 @@ func processMessage(topic string, msg *sarama.ConsumerMessage) error {
 	case "BH1", "BH6":
 		log.Printf("Processing hospital_admin message: %s", string(msg.Value))
 
-		var admin database.HospitalAdmin
-		if err := json.Unmarshal(msg.Value, &admin); err != nil {
-			log.Printf("Failed to unmarshal hospital_admin message: %v", err)
-			return err
-		}
-		if err := database.NorthDB.Create(&admin); err != nil {
-			log.Printf("Failed to save hospital_admin data: %v", err.Error)
-			return fmt.Errorf("Failed to write to the DB", err.Error, err)
-		}
+		// var admin database.HospitalAdmin
+		// if err := json.Unmarshal(msg.Value, &admin); err != nil {
+		// 	log.Printf("Failed to unmarshal hospital_admin message: %v", err)
+		// 	return err
+		// }
+		// if err := database.NorthDB.Create(&admin); err != nil {
+		// 	log.Printf("Failed to save hospital_admin data: %v", err.Error)
+		// 	return fmt.Errorf("Failed to write to the DB", err.Error, err)
+		// }
 	case "hospital_registration":
 		log.Printf("Processing hospital_registration message: %s", string(msg.Value))
 
-		var hospital database.Hospitals
-		if err := json.Unmarshal(msg.Value, &hospital); err != nil {
-			log.Printf("Error unmarshalling hospital data: %v", err)
-			return err
+		// var hospital database.Hospitals
+		// if err := json.Unmarshal(msg.Value, &hospital); err != nil {
+		// 	log.Printf("Error unmarshalling hospital data: %v", err)
+		// 	return err
 
-		}
-		hospital.Username = fmt.Sprintf("DEL%d", hospital.HospitalId)
+		// }
+		// hospital.Username = fmt.Sprintf("DEL%d", hospital.HospitalId)
 
-		if err := database.NorthDB.Create(&hospital).Error; err != nil {
-			log.Printf("Error creating hospital in database: %v", err)
-			return fmt.Errorf(err.Error(), err)
-		}
+		// if err := database.NorthDB.Create(&hospital).Error; err != nil {
+		// 	log.Printf("Error creating hospital in database: %v", err)
+		// 	return fmt.Errorf(err.Error(), err)
+		// }
 	default:
 		// Handle any other topics or log an error if the topic is not recognized
 		log.Printf("Received message from unknown topic: %s", topic)

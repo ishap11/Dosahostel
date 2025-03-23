@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	bigBoysDB *gorm.DB
-	boysOneDB *gorm.DB
+	Northdb *gorm.DB
+	Southdb *gorm.DB
 )
 var err error
 
@@ -37,19 +37,19 @@ func InitDB() {
 	boysOneDSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", boysOneDBHost, boysOneDBUser, boysOneDBPassword, boysOneDBName, boysOneDBPort)
 
 	// Connecting to Big Boys Database
-	bigBoysDB, err = gorm.Open(postgres.Open(bigBoysDSN), &gorm.Config{})
+	Northdb, err = gorm.Open(postgres.Open(bigBoysDSN), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error connecting to the Big Boys database: %v", err)
 	}
 
 	// Connecting to Boys One Database
-	boysOneDB, err = gorm.Open(postgres.Open(boysOneDSN), &gorm.Config{})
+	Southdb, err = gorm.Open(postgres.Open(boysOneDSN), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error connecting to the Boys One database: %v", err)
 	}
 
 	// Ensure the connections are established
-	sqlBigBoysDB, err := bigBoysDB.DB()
+	sqlBigBoysDB, err := Northdb.DB()
 	if err != nil {
 		log.Fatalf("Error getting the Big Boys database object: %v", err)
 	}
@@ -58,7 +58,7 @@ func InitDB() {
 		log.Fatalf("Error pinging the Big Boys database: %v", err)
 	}
 
-	sqlBoysOneDB, err := boysOneDB.DB()
+	sqlBoysOneDB, err := Southdb.DB()
 	if err != nil {
 		log.Fatalf("Error getting the Boys One database object: %v", err)
 	}
@@ -70,13 +70,13 @@ func InitDB() {
 	// Print successful connection messages
 	fmt.Println("Big Boys and Boys One Database connections successful")
 
-	migrateBigBoysDB()
-	migrateBoysOneDB()
+	NorthDB()
+	SouthDB()
 }
 
-func migrateBigBoysDB() {
+func NorthDB() {
 
-	err = bigBoysDB.AutoMigrate(&models.Student{}, &models.Warden{}, models.Complaint{})
+	err = Northdb.AutoMigrate(&models.Users{}, &models.Inventory{}, models.Invoice{})
 	if err != nil {
 		log.Fatalf("Error migrating models (students, wardens): %v", err)
 	}
@@ -85,9 +85,9 @@ func migrateBigBoysDB() {
 }
 
 // Boys One DB migrations
-func migrateBoysOneDB() {
+func SouthDB() {
 
-	err = boysOneDB.AutoMigrate(&models.Student{}, &models.Warden{}, models.Complaint{})
+	err = Southdb.AutoMigrate(&models.Users{}, &models.Inventory{}, models.Invoice{})
 	if err != nil {
 		log.Fatalf("Error migrating models (students, wardens, user): %v", err)
 	}
@@ -97,10 +97,10 @@ func migrateBoysOneDB() {
 
 func GetDB(region string) (*gorm.DB, error) {
 	switch region {
-	case "BH1", "BH6":
-		return bigBoysDB, nil
-	case "BH2", "BH3", "BH4", "BH5":
-		return boysOneDB, nil
+	case "north":
+		return Northdb, nil
+	case "south":
+		return Southdb, nil
 	default:
 		return nil, fmt.Errorf("invalid region: %s", region)
 	}

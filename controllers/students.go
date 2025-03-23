@@ -10,15 +10,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func StudentRegistration(c *gin.Context) {
-	var student models.Student
+func BusinessAdminReg(c *gin.Context) {
+	var admin models.Users
 
-	if err := c.BindJSON(&student); err != nil {
+	if err := c.BindJSON(&admin); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	database, err := db.GetDB(student.HostelName)
+	database, err := db.GetDB(admin.Region)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -27,28 +27,28 @@ func StudentRegistration(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid region"})
 		return
 	}
-	var existingUser models.Student
-	if err := database.Where("email =?", student.Email).First(&existingUser).Error; err == nil {
+	var existingUser models.Users
+	if err := database.Where("email =?", admin.Email).First(&existingUser).Error; err == nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "user already exists"})
 		return
 	}
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(student.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
-	student.Password = string(hashedPassword)
-	student.UserType = "student"
+	admin.Password = string(hashedPassword)
+	admin.User_type = "Admin"
 
-	userStudent := models.Student{
-		FullName:       student.FullName,
-		Email:          student.Email,
-		ContactDetails: student.ContactDetails,
-		RegNo:          student.RegNo,
-		Room:           student.Room,
-		Password:       student.Password,
-		HostelName:     student.HostelName,
-		UserType:       student.UserType,
+	userStudent := models.Users{
+		Full_Name:     admin.Full_Name,
+		GenderInfo:    models.Gender(admin.GenderInfo),
+		ContactNumber: admin.ContactNumber,
+		Email:         admin.Email,
+		Password:      admin.Password,
+		BusinessName:  admin.BusinessName,
+		Region:        admin.Region,
+		User_type:     models.Buyer,
 	}
 	if err := database.Create(&userStudent).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -61,16 +61,16 @@ func StudentRegistration(c *gin.Context) {
 
 func StudentLogin(c *gin.Context) {
 	var loginRequest struct {
-		Email      string `json:"email"`
-		Password   string `json:"password"`
-		HostelName string `json:"hostel_name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Region   string `json:"region"`
 	}
 	if err := c.BindJSON(&loginRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	database, err := db.GetDB(loginRequest.HostelName)
+	database, err := db.GetDB(loginRequest.Region)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -80,18 +80,18 @@ func StudentLogin(c *gin.Context) {
 		return
 	}
 
-	var student models.Student
-	if err := database.Where("email = ?", loginRequest.Email).First(&student).Error; err != nil {
+	var admin models.Users
+	if err := database.Where("email = ?", loginRequest.Email).First(&admin).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(student.Password), []byte(loginRequest.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(loginRequest.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Password"})
 		return
 	}
 
-	jwtToken, err := utils.GenerateStudentJWT(int(student.StudentID), student.HostelName, student.RegNo, student.UserType)
+	jwtToken, err := utils.GenerateStudentJWT(int(admin.ID), admin.Region, string(admin.User_type))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate JWT token"})
 		return

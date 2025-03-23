@@ -7,21 +7,21 @@ import (
 	"net/http"
 
 	db "github.com/adityjoshi/Dosahostel/database"
-	kafkamanager "github.com/adityjoshi/Dosahostel/kafka/manager"
+	kafkamanager "github.com/adityjoshi/Dosahostel/kafkamanager"
 	"github.com/adityjoshi/Dosahostel/models"
 	"github.com/adityjoshi/Dosahostel/utils"
 	"github.com/gin-gonic/gin"
 )
 
-func PostComplaint(c *gin.Context) {
-
+func PostInventory(c *gin.Context) {
+	// Extract token from header
 	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
 		return
 	}
 
-	// Decode token to extract student details
+	// Decode token to extract admin details
 	claims, err := utils.DecodeStudentJWT(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
@@ -33,62 +33,70 @@ func PostComplaint(c *gin.Context) {
 		return
 	}
 
-	studentID, ok := userClaims["user_id"].(float64)
+	adminID, ok := userClaims["user_id"].(float64)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user_id in token"})
 		return
 	}
-
-	regNo, ok := userClaims["reg_no"].(string)
+	region, ok := userClaims["region"].(string) // Extracting region from JWT
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid reg_no in token"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid region in token"})
 		return
 	}
 
-	blockID, ok := userClaims["block_id"].(string)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid block_id in token"})
+	database, err := db.GetDB(region)
+	if err != nil || database == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
 
-	var complaintReq struct {
-		Complaint   string `json:"complaint"`
-		Description string `json:"description"`
+	var admin models.Users
+	if err := database.Where("id = ?", uint(adminID)).First(&admin).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Admin not found"})
+		return
 	}
 
-	if err := c.ShouldBindJSON(&complaintReq); err != nil {
+	// Bind JSON request body
+	var inventoryReq struct {
+		ProductName string `json:"product_name"`
+		GSTNumber   string `json:"gst_number"`
+		Quantity    int    `json:"quantity"`
+	}
+
+	if err := c.ShouldBindJSON(&inventoryReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
-	database, err := db.GetDB(blockID)
-	if err != nil || database == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error or invalid hostel"})
-		return
-	}
-	var student models.Student
-	if err := database.Where("reg_no = ?", regNo).First(&student).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found"})
-		return
+
+	// Create new inventory record
+	inventory := models.Inventory{
+		AdminID:      uint(adminID),
+		BusinessName: admin.BusinessName,
+		GSTNumber:    inventoryReq.GSTNumber,
+		ProductName:  inventoryReq.ProductName,
+		Quantity:     inventoryReq.Quantity,
 	}
 
-	complaint := models.Complaint{
-		RegNo:          regNo,
-		ComplaintType:  models.ComplaintType(complaintReq.Complaint),
-		Description:    complaintReq.Description,
-		StudentID:      uint(studentID),
-		HostelName:     blockID,
-		Room:           student.Room,
-		ContactDetails: student.ContactDetails,
-	}
-
-	if err := database.Create(&complaint).Error; err != nil {
+	if err := database.Create(&inventory).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User complaint registered successfully",
+		"message": "Inventory item registered successfully",
 	})
 }
+
+/*
+
+
+
+
+
+
+
+
+ */
 
 func PostComplaintKafka(c *gin.Context) {
 	km, exists := c.Get("km")

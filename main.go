@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	db "github.com/adityjoshi/Dosahostel/database"
+	kafkamanager "github.com/adityjoshi/Dosahostel/kafkamanager"
 	"github.com/adityjoshi/Dosahostel/routes"
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,22 @@ func main() {
 		})
 	})
 
+	northBrokers := []string{"kafka-broker:9092"}
+	southBrokers := []string{"kafka-broker:9092"}
+
+	var err error
+	km, err = kafkamanager.NewKafkaManager(northBrokers, southBrokers)
+	if err != nil {
+		log.Fatal("Failed to initialize Kafka Manager:", err)
+	}
+
+	regions := []string{"north", "south"}
+	for _, region := range regions {
+		go func(r string) {
+			log.Printf("Starting Kafka consumer for region: %s\n", r)
+			consumer.StartConsumer(r)
+		}(region)
+	}
 	server := &http.Server{
 		Addr:    ":8001",
 		Handler: router,
