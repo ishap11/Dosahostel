@@ -2,6 +2,7 @@ package routes
 
 import (
 	"log"
+	"time"
 
 	"github.com/adityjoshi/Dosahostel/controllers"
 	kafkamanager "github.com/adityjoshi/Dosahostel/kafka/manager"
@@ -12,7 +13,7 @@ import (
 
 func StudentRoutes(incomingRoutes *gin.Engine, km *kafkamanager.KafkaManager) {
 	incomingRoutes.POST("/student/register", controllers.BusinessAdminReg)
-	incomingRoutes.GET("/student/login", controllers.StudentLogin)
+	incomingRoutes.POST("/student/login", middleware.RateLimiterMiddleware(2, time.Minute), controllers.StudentLogin)
 	incomingRoutes.POST("/student/complaint", middleware.AuthorizeStudent(), controllers.PostInventory)
 
 	incomingRoutes.POST("/student/bulk", func(c *gin.Context) {
