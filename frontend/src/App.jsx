@@ -3,10 +3,13 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 // import Dashboard from './pages/Dashboard';
 import LoginOTPVerification from './pages/LoginOtpPage';
+import PrivateRoute from './context/PrivateRoute';
+import MainLayout from './pages/layout/MainLayout';
 
 import Inventory from './pages/Inventory';
 import { RoutesPathName } from './constants';
 // import PrivateRoute from './context/PrivateRoute';
+
 
 const router = createBrowserRouter([
   {
@@ -21,10 +24,7 @@ const router = createBrowserRouter([
     path: RoutesPathName.LoginOTPVerification_Page,
     element: <LoginOTPVerification />,
   },
-{
-  path:'',
-  element: <Inventory />
-}
+
 
   // {
   //   path: RoutesPathName.DASHBOARD_PAGE,
@@ -34,6 +34,24 @@ const router = createBrowserRouter([
   //     </PrivateRoute>
   //   ),
   // },
+  {
+   
+    path: '/',
+    element: (
+      <PrivateRoute>
+        {/* <Dashboard > */}
+          <MainLayout />
+        {/* </Dashboard> */}
+      </PrivateRoute>
+    ),
+    children: [
+      {
+        path: RoutesPathName.Inventory_page,
+        element: <Inventory />,
+      },
+    ],
+  },
+
 ]);
 
 function App() {
