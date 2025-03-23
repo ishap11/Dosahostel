@@ -9,4 +9,5 @@ export const RoutesPathName = {
     SIGNUP_PAGE : '/signup',
     LOGIN_PAGE : '/login',
     LoginOTPVerification_Page :'/verifyotp',
+    INVENTORY_PAGE : '/inventory'
 }
