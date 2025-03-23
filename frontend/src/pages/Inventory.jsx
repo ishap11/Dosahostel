@@ -60,7 +60,7 @@ function Inventory() {
         await axios.put(`${API_BASE_URL}/${editingItem.id}`, formData);
         toast.success('Inventory updated successfully');
       } else {
-        await axios.post(`${API_BASE_URL}`, formData);
+        await axios.post("http://localhost:2426/student/complaint", formData);
         toast.success('Inventory added successfully');
       }
       setIsModalOpen(false);

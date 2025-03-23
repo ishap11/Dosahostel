@@ -44,8 +44,8 @@ export default function LoginPage() {
   return (
     <div style={styles.container}>
       {/* Left Side - Full Image */}
-      <div style={styles.leftContainer}>z
-        <img src="./Images/bg-white-login.jpg" alt="Login Background" style={styles.image} />
+      <div style={styles.leftContainer}>
+        <img src="/images/login-bg.jpg" alt="Login Background" style={styles.image} />
       </div>
 
       {/* Right Side - Login Form */}

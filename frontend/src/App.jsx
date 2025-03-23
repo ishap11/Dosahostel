@@ -21,10 +21,11 @@ const router = createBrowserRouter([
     path: RoutesPathName.LoginOTPVerification_Page,
     element: <LoginOTPVerification />,
   },
-{
-  path:'',
-  element: <Inventory />
-}
+
+  {
+    path:RoutesPathName.INVENTORY_PAGE,
+    element: <Inventory />
+  }
 
   // {
   //   path: RoutesPathName.DASHBOARD_PAGE,
