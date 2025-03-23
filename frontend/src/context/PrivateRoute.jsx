@@ -3,11 +3,11 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 
 export default function PrivateRoute({ children }) {
-  const { authToken } = useAuth();
+  // const { authToken } = useAuth();
 
-  if (!authToken) {
-    return <Navigate to={RoutesPathName.LOGIN_PAGE} replace />;
-  }
+  // if (!authToken) {
+  //   return <Navigate to={RoutesPathName.LOGIN_PAGE} replace />;
+  // }
 
   return children;
 }
