@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/rand"
+	"crypto/tls"
 	"fmt"
 	"log"
 	"math/big"
@@ -97,7 +98,7 @@ func DeleteOTP(key string) error {
 
 func OtpRegistration(to, otp string) error {
 	message := gomail.NewMessage()
-	message.SetHeader("From", "aditya3.collegeboard@gmail.com")
+	message.SetHeader("From", "mohantybrajesh4@gmail.com")
 	message.SetHeader("To", to, "aditya30joshi@gmail.com")
 	message.SetHeader("Subject", "Otp Verification")
 
@@ -120,7 +121,10 @@ func OtpRegistration(to, otp string) error {
 
 	//message.Attach("/home/Alex/lolcat.jpg")
 
-	dialer := gomail.NewDialer("smtp.gmail.com", 587, "mohantybrajesh4@gmail.com", "axrbvuubnrsrctso") // Update with your SMTP server details
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, "mohantybrajesh4@gmail.com", "axrbvuubnrsrctso")
+	dialer.TLSConfig = &tls.Config{
+		InsecureSkipVerify: true, // ⚠️ Not recommended for production
+	} // Update with your SMTP server details
 
 	// Send email
 	if err := dialer.DialAndSend(message); err != nil {

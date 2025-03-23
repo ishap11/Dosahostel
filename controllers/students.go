@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"context"
 	"net/http"
+	"strconv"
 
 	db "github.com/adityjoshi/Dosahostel/database"
 	"github.com/adityjoshi/Dosahostel/models"
@@ -99,4 +101,62 @@ func StudentLogin(c *gin.Context) {
 	utils.GenerateAndSendOTP(admin.Email)
 
 	c.JSON(http.StatusOK, gin.H{"Status": "Login successful", "token": jwtToken})
+}
+
+func VerifyAdminOTP(c *gin.Context) {
+	var otpRequest struct {
+		Email string `json:"email"`
+		OTP   string `json:"otp"`
+	}
+	if err := c.BindJSON(&otpRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Get region from context and assert its type
+	region, exists := c.Get("region")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized region"})
+		return
+	}
+	regionStr, ok := region.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid region type"})
+		return
+	}
+
+	// Verify the OTP
+	isValid, err := utils.VerifyOtp(otpRequest.Email, otpRequest.OTP)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error verifying OTP"})
+		return
+	}
+	if !isValid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid OTP"})
+		return
+	}
+
+	// Retrieve the appropriate database based on region
+	database, err := db.GetDB(regionStr)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error connecting to regional database"})
+		return
+	}
+
+	// Retrieve user information after OTP verification
+	var user models.Users
+	if err := database.Where("email = ?", otpRequest.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Set OTP verification status in Redis
+	redisClient := db.GetRedisClient()
+	err = redisClient.Set(context.Background(), "otp_verified:"+strconv.Itoa(int(user.ID)), "verified", 0).Err()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error setting OTP verification status"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success", "region": regionStr})
 }
