@@ -20,4 +20,5 @@ func StudentRoutes(incomingRoutes *gin.Engine, km *kafkamanager.KafkaManager) {
 		c.Set("km", km) // Set KafkaManager to context
 		controllers.PostComplaintKafka(c)
 	})
+	incomingRoutes.POST("/verify-otp", middleware.AuthorizeStudent(), controllers.VerifyAdminOTP)
 }
