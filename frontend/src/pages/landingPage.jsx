@@ -22,7 +22,7 @@ const InventoryManagementLanding = () => {
     nav: {
       backgroundColor: '#ffffff',
       boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-    },
+    },       
     navContainer: {
       maxWidth: '1280px',
       margin: '0 auto',
