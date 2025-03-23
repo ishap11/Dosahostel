@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	db "github.com/adityjoshi/Dosahostel/database"
 	kafkamanager "github.com/adityjoshi/Dosahostel/kafka/manager"
@@ -13,7 +14,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var count int = 0
+
 func PostInventory(c *gin.Context) {
+	count++
+
+	if count >= 500 {
+		// Simulate failure when counter reaches 500
+		log.Printf("Simulated failure: reached %d inventory entries", count)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Simulated failure: reached 500 inventory entries",
+		})
+		os.Exit(1)
+		return
+	}
 	// Extract token from header
 	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {
@@ -97,13 +111,13 @@ func PostComplaintKafka(c *gin.Context) {
 		return
 	}
 
-	// Check if the type of KafkaManager is correct
+	log.Printf("KafkaManager retrieved from context: %v", km)
+
 	kafkaManager, ok := km.(*kafkamanager.KafkaManager)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid KafkaManager"})
 		return
 	}
-
 	// Check if Authorization token is present
 	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {

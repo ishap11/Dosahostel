@@ -79,14 +79,13 @@
 // 	case "hospital_registration":
 // 		log.Printf("Processing hospital_registration message: %s", string(msg.Value))
 
-// 	default:
-// 		// Handle any other topics or log an error if the topic is not recognized
-// 		log.Printf("Received message from unknown topic: %s", topic)
-// 		// Add your default logic here
-// 	}
-// 	return nil
-// }
-
+//		default:
+//			// Handle any other topics or log an error if the topic is not recognized
+//			log.Printf("Received message from unknown topic: %s", topic)
+//			// Add your default logic here
+//		}
+//		return nil
+//	}
 package consumer
 
 import (
@@ -106,6 +105,7 @@ type NorthConsumer struct {
 }
 
 func NewNorthConsumer(broker string, topics []string) (*NorthConsumer, error) {
+	log.Printf("Creating NorthConsumer for broker: %s, topics: %v", broker, topics)
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 
@@ -117,8 +117,6 @@ func NewNorthConsumer(broker string, topics []string) (*NorthConsumer, error) {
 	}
 
 	log.Printf("Kafka consumer created successfully, subscribing to topics: %v", topics)
-
-	// Return a NorthConsumer instance with the list of topics
 	return &NorthConsumer{Consumer: consumer, Topics: topics}, nil
 }
 
@@ -137,7 +135,6 @@ func (nc *NorthConsumer) Listen() {
 		}
 		defer partitionConsumer.Close()
 
-		// Log that the consumer has started listening
 		log.Printf("Consumer is now listening to topic: %s from partition 0\n", topic)
 
 		// Start a goroutine for each topic to consume messages concurrently
@@ -150,7 +147,6 @@ func (nc *NorthConsumer) Listen() {
 
 func (nc *NorthConsumer) consumeMessages(partitionConsumer sarama.PartitionConsumer) {
 	for msg := range partitionConsumer.Messages() {
-		// Log received message and metadata
 		log.Printf("Received message from topic %s: %s\n", msg.Topic, string(msg.Value))
 		log.Printf("Message metadata - Partition: %d, Offset: %d\n", msg.Partition, msg.Offset)
 
@@ -174,7 +170,6 @@ func processMessage(msg *sarama.ConsumerMessage) error {
 			return err
 		}
 
-		// Insert the inventory data into the database (batch processing logic)
 		if err := saveInventoryData(inventory); err != nil {
 			log.Printf("Failed to save inventory data: %v", err)
 			return err
@@ -182,7 +177,6 @@ func processMessage(msg *sarama.ConsumerMessage) error {
 
 		log.Printf("Inventory data processed successfully")
 	} else {
-		// Handle other topics
 		log.Printf("Received message from unknown topic: %s", msg.Topic)
 	}
 
@@ -190,19 +184,15 @@ func processMessage(msg *sarama.ConsumerMessage) error {
 }
 
 func saveInventoryData(inventory models.Inventory) error {
-	// Get the database connection (assuming the region is fixed to "north")
 	database, err := db.GetDB("north")
 	if err != nil || database == nil {
 		log.Printf("Database error: %v", err)
 		return err
 	}
 
-	// Batch processing: If multiple messages are to be inserted, we collect them in a batch
-	// For now, we assume inventory messages are consumed individually, but can be optimized in a batch.
 	var inventories []models.Inventory
 	inventories = append(inventories, inventory)
 
-	// For batch insert, using `CreateInBatches` in GORM (assuming it's supported in your version of GORM)
 	if err := database.CreateInBatches(inventories, 100).Error; err != nil {
 		log.Printf("Error inserting inventory data in batch: %v", err)
 		return err

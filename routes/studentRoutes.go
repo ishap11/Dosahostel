@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"log"
+
 	"github.com/adityjoshi/Dosahostel/controllers"
 	kafkamanager "github.com/adityjoshi/Dosahostel/kafka/manager"
 	"github.com/adityjoshi/Dosahostel/middleware"
@@ -12,8 +14,10 @@ func StudentRoutes(incomingRoutes *gin.Engine, km *kafkamanager.KafkaManager) {
 	incomingRoutes.POST("/student/register", controllers.BusinessAdminReg)
 	incomingRoutes.GET("/student/login", controllers.StudentLogin)
 	incomingRoutes.POST("/student/complaint", middleware.AuthorizeStudent(), controllers.PostInventory)
+
 	incomingRoutes.POST("/student/bulk", func(c *gin.Context) {
-		c.Set("km", km)
+		log.Printf("KafkaManager before setting in context: %v", km)
+		c.Set("km", km) // Set KafkaManager to context
 		controllers.PostComplaintKafka(c)
 	})
 }
