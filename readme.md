@@ -1,4 +1,76 @@
+# DUKAAN
+
+## Overview
+
+This project is a comprehensive procurement and inventory management system designed to streamline order processing, vendor communication, and customer invoicing. It consists of the following three main components:
+
+1. **Chatbot for Procurement and Tracking** – A WhatsApp chatbot that allows users to place orders, track orders, and automatically send email notifications to vendors.
+2. **Web App for Inventory Management** – A web-based dashboard for managing inventory, tracking stock levels, and handling procurement orders efficiently.
+3. **Invoice Generation & Customer Email Notifications** – Automated invoice generation for completed orders, with email notifications sent to customers.
+
+## Features & Technologies Used
+
+### 1. Chatbot for Procurement and Tracking
+
+- Developed using **Twilio WhatsApp API** to handle order placement and tracking.
+- Uses **Redis** for caching frequently accessed data, reducing response time.
+- Automatically extracts vendor details and sends email notifications using **SMTP**.
+- Secure authentication using **OTP + JWT**.
+- Kafka-based event-driven architecture for order processing.
+
+### 2. Web App for Inventory Management
+
+- Built using a **sharded database** architecture across 4 regions for optimized performance.
+- Supports real-time inventory tracking and procurement requests.
+- Containerized using **Docker** for seamless deployment and scalability.
+- Kafka integration for efficient stock updates and event-driven operations.
+
+### 3. Invoice Generation & Customer Email Notifications
+
+- Generates invoices automatically upon order completion.
+- Sends invoice details to customers via email.
+- Kafka-based event handling ensures reliability in processing and sending invoices.
+- Uses **Redis** for caching order details and reducing load on the primary database.
+
+## Deployment & Setup
+
+### Prerequisites
+
+- Docker installed
+- Kafka cluster setup
+- Redis for caching
+- PostgreSQL (sharded across 4 regions)
+- Twilio account for chatbot functionality
+
+### Running the System
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/procurement-chatbot.git
+   cd procurement-chatbot
+   ```
+2. Set up environment variables for authentication (Twilio, email, database, etc.).
+3. Start Docker containers:
+   ```bash
+   docker-compose up --build
+   ```
+4. Ensure Kafka brokers and Redis are running properly.
+5. Access the chatbot via WhatsApp and the web app via your browser.
+
+## Future Enhancements
+
+- AI-powered insights for inventory demand forecasting.
+- Multi-vendor marketplace integration.
+- Support for additional messaging platforms (Telegram, Slack, etc.).
+
+This system is providing a powerful and scalable solution for procurement, inventory management, and invoicing, leveraging cutting-edge technologies to ensure efficiency and reliability
+
+
+
 ```
+
+Sample Logs 
+
 [+] Building 94.9s (16/16) FINISHED                                                                                                                 docker:desktop-linux 
  => [auth-service internal] load build definition from Dockerfile                                                                                                   0.0s 
  => => transferring dockerfile: 683B                                                                                                                                0.0s 
