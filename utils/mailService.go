@@ -7,8 +7,9 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/adityjoshi/avinya/Backend/database"
+	db "github.com/adityjoshi/Dosahostel/database"
 	"github.com/adityjoshi/avinya/Backend/utils"
+
 	"github.com/go-redis/redis"
 )
 
@@ -40,7 +41,7 @@ func GenerateAndSendOTP(email string) (string, error) {
 
 // VerifyOtp verifies the provided OTP against the stored OTP.
 func VerifyOtp(email, otp string) (bool, error) {
-	storedOtp, err := utils.GetOtp(email + "_otp")
+	storedOtp, err := GetOtp(email + "_otp")
 	if err == redis.Nil {
 		log.Printf("OTP not found for email: %s", email)
 		return false, nil
@@ -54,7 +55,7 @@ func VerifyOtp(email, otp string) (bool, error) {
 	}
 
 	// Delete OTP after successful verification
-	err = utils.DeleteOTP(email + "_otp")
+	err = DeleteOTP(email + "_otp")
 	if err != nil {
 		log.Printf("Failed to delete OTP for email: %s", email)
 		return false, err
@@ -72,16 +73,16 @@ func GenerateOtp() (string, error) {
 }
 
 func StoreOtp(key, otp string) error {
-	client := database.GetRedisClient()
+	client := db.GetRedisClient()
 	// otp will expire after 5 min
-	return client.Set(database.Ctx, key, otp, 5*time.Minute).Err()
+	return client.Set(db.Ctx, key, otp, 5*time.Minute).Err()
 }
 
 // Retrieve OTP from Redis
 func GetOtp(key string) (string, error) {
-	client := database.GetRedisClient()
+	client := db.GetRedisClient()
 
-	otp, err := client.Get(database.Ctx, key).Result()
+	otp, err := client.Get(db.Ctx, key).Result()
 	if err != nil {
 		return "", err
 	}
@@ -90,6 +91,6 @@ func GetOtp(key string) (string, error) {
 
 // Delete OTP from Redis
 func DeleteOTP(key string) error {
-	client := database.GetRedisClient()
-	return client.Del(database.Ctx, key).Err()
+	client := db.GetRedisClient()
+	return client.Del(db.Ctx, key).Err()
 }

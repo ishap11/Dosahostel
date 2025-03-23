@@ -85,7 +85,7 @@ services:
       - DB_BOYS_ONE_NAME=boys_db
 
       - KAFKA_BROKER=kafka:9092
-      - REDIS_URL=redis:6379
+      - REDIS_URL=redis-cache:6379
     depends_on:
       - big_boys-db
       - boys_one-db
