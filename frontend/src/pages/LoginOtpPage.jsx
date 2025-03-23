@@ -2,18 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 
-const roleEndpoints = {
-//   Admin: "http://localhost:2426/hospitalAdmin/adminOtp",
-//   Compounder: "http://localhost:2426/compounder/staffOtp",
-//   Receptionist: "http://localhost:2426/receptionist/staffOtp"
-};
-
 export default function VerifyOtpPage() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  // const { login } = useAuth();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -27,21 +21,15 @@ export default function VerifyOtpPage() {
       return;
     }
 
-    const endpoint = roleEndpoints[role];
-    if (!endpoint) {
-      alert("Invalid role configuration. Contact support.");
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch("", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": jwtToken,
-          "Region": region
+          Authorization: jwtToken,
+          Region: region,
         },
         body: JSON.stringify({ email, otp }),
       });
@@ -62,52 +50,50 @@ export default function VerifyOtpPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 shadow-lg rounded-lg max-w-sm w-full">
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">
-          Verify OTP
-        </h2>
-        <form onSubmit={onSubmit} className="space-y-4">
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: "#f3f4f6" }}>
+      <div style={{ backgroundColor: "#fff", padding: "30px", borderRadius: "10px", boxShadow: "0 0 15px rgba(0,0,0,0.1)", maxWidth: "400px", width: "100%" }}>
+        <h2 style={{ fontSize: "24px", fontWeight: "600", textAlign: "center", color: "#333", marginBottom: "20px" }}>Verify OTP</h2>
+        <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "5px", color: "#555" }}>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "8px", outline: "none", fontSize: "14px" }}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              OTP Code
-            </label>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "5px", color: "#555" }}>OTP Code</label>
             <input
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "8px", outline: "none", fontSize: "14px" }}
             />
           </div>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50"
+            style={{
+              width: "100%",
+              backgroundColor: isSubmitting ? "#93c5fd" : "#2563eb",
+              color: "#fff",
+              padding: "10px",
+              borderRadius: "8px",
+              fontWeight: "600",
+              border: "none",
+              cursor: isSubmitting ? "not-allowed" : "pointer",
+              transition: "background-color 0.3s ease",
+            }}
           >
             {isSubmitting ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
-        {/* <p className="mt-4 text-center text-sm text-gray-600">
-          Didn't receive an OTP?{" "}
-          <button
-            className="text-blue-500 font-medium hover:underline"
-            onClick={() => alert("Resend OTP functionality coming soon!")}
-          >
-            Resend OTP
-          </button>
+        {/* <p style={{ marginTop: "15px", textAlign: "center", fontSize: "13px", color: "#666" }}>
+          Didn't receive an OTP? <button style={{ color: "#2563eb", fontWeight: "500", background: "none", border: "none", cursor: "pointer" }} onClick={() => alert("Resend OTP functionality coming soon!")}>Resend OTP</button>
         </p> */}
       </div>
     </div>
