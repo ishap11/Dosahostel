@@ -24,7 +24,7 @@ export default function VerifyOtpPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("", {
+      const response = await fetch("http://localhost:2426/auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,28 +50,31 @@ export default function VerifyOtpPage() {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: "#f3f4f6" }}>
-      <div style={{ backgroundColor: "#fff", padding: "30px", borderRadius: "10px", boxShadow: "0 0 15px rgba(0,0,0,0.1)", maxWidth: "400px", width: "100%" }}>
-        <h2 style={{ fontSize: "24px", fontWeight: "600", textAlign: "center", color: "#333", marginBottom: "20px" }}>Verify OTP</h2>
-        <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "linear-gradient(135deg, #e0ecff, #f9fafe)", padding: "20px" }}>
+      <div style={{ backgroundColor: "#fff", padding: "40px", borderRadius: "16px", boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)", maxWidth: "420px", width: "100%" }}>
+        <h2 style={{ fontSize: "26px", fontWeight: "700", textAlign: "center", color: "#1a1a1a", marginBottom: "20px" }}>Verify OTP</h2>
+        <p style={{ textAlign: "center", fontSize: "14px", color: "#555", marginBottom: "25px" }}>Enter the OTP sent to your email to continue</p>
+        <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>
-            <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "5px", color: "#555" }}>Email</label>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "#333" }}>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "8px", outline: "none", fontSize: "14px" }}
+              placeholder="you@example.com"
+              style={{ width: "100%", padding: "12px", border: "1px solid #ccc", borderRadius: "10px", fontSize: "14px", outline: "none" }}
             />
           </div>
           <div>
-            <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "5px", color: "#555" }}>OTP Code</label>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "#333" }}>OTP Code</label>
             <input
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
-              style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "8px", outline: "none", fontSize: "14px" }}
+              placeholder="Enter 6-digit OTP"
+              style={{ width: "100%", padding: "12px", border: "1px solid #ccc", borderRadius: "10px", fontSize: "14px", outline: "none" }}
             />
           </div>
           <button
@@ -79,11 +82,12 @@ export default function VerifyOtpPage() {
             disabled={isSubmitting}
             style={{
               width: "100%",
-              backgroundColor: isSubmitting ? "#93c5fd" : "#2563eb",
+              backgroundColor: isSubmitting ? "#a5b6d2" : "#0056d2",
               color: "#fff",
-              padding: "10px",
-              borderRadius: "8px",
+              padding: "12px",
+              fontSize: "15px",
               fontWeight: "600",
+              borderRadius: "10px",
               border: "none",
               cursor: isSubmitting ? "not-allowed" : "pointer",
               transition: "background-color 0.3s ease",
@@ -92,9 +96,9 @@ export default function VerifyOtpPage() {
             {isSubmitting ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
-        {/* <p style={{ marginTop: "15px", textAlign: "center", fontSize: "13px", color: "#666" }}>
-          Didn't receive an OTP? <button style={{ color: "#2563eb", fontWeight: "500", background: "none", border: "none", cursor: "pointer" }} onClick={() => alert("Resend OTP functionality coming soon!")}>Resend OTP</button>
-        </p> */}
+        <p style={{ marginTop: "20px", textAlign: "center", fontSize: "13px", color: "#666" }}>
+          Didn't receive an OTP? <button style={{ color: "#0056d2", fontWeight: "600", background: "none", border: "none", cursor: "pointer" }} onClick={() => alert("Resend OTP functionality coming soon!")}>Resend OTP</button>
+        </p>
       </div>
     </div>
   );
