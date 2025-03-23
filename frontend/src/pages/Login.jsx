@@ -41,64 +41,71 @@ export default function LoginPage() {
     }
   };
 
-  
   return (
     <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Login</h2>
-        {error && <p style={styles.error}>{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={styles.input}
+      {/* Left Side - Full Image */}
+      <div style={styles.leftContainer}>z
+        <img src="./Images/bg-white-login.jpg" alt="Login Background" style={styles.image} />
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div style={styles.rightContainer}>
+        <div style={styles.card}>
+          <h2 style={styles.title}>Login</h2>
+          {error && <p style={styles.error}>{error}</p>}
+          <form onSubmit={handleSubmit}>
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                style={styles.input}
               />
-          </div>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              style={styles.input}
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                style={styles.input}
               />
-          </div>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Region</label>
-            <select
-              name="region"
-              value={formData.region}
-              onChange={handleChange}
-              style={styles.select}
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Region</label>
+              <select
+                name="region"
+                value={formData.region}
+                onChange={handleChange}
+                style={styles.select}
               >
-              {["north", "south", "east", "west"].map((region) => (
-                <option key={region} value={region}>
-                  {region.charAt(0).toUpperCase() + region.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            style={loading ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-        <p style={styles.footerText}>
-          Don't have an account?{' '}
-          <a href="/SignUp" style={styles.link}>Sign Up</a>
-        </p>
+                {["north", "south", "east", "west"].map((region) => (
+                  <option key={region} value={region}>
+                    {region.charAt(0).toUpperCase() + region.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              style={loading ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+          <p style={styles.footerText}>
+            Don't have an account?{' '}
+            <a href="/SignUp" style={styles.link}>Sign Up</a>
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -107,16 +114,35 @@ export default function LoginPage() {
 const styles = {
   container: {
     display: "flex",
+    height: "100vh",
+    width: "100vw",
+  },
+  leftContainer: {
+    flex: 1,
+    backgroundColor: "rgb(255, 255, 255)",
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    minHeight: "100vh",
-    backgroundColor: "#f3f4f6",
+    borderTopLeftRadius: "30px",
+    borderBottomLeftRadius: "30px",
+    width: "50%", 
+  },
+  image: {
+    width: "100%",
+    //height: "100%",
+    objectFit: "cover",
+  },
+  rightContainer: {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffffff",
+    
+    // boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
   },
   card: {
-    backgroundColor: "#ffffff",
     padding: "30px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
     maxWidth: "400px",
     width: "100%",
   },

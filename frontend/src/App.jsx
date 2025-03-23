@@ -9,18 +9,18 @@ import { RoutesPathName } from './constants';
 // import PrivateRoute from './context/PrivateRoute';
 
 const router = createBrowserRouter([
-  // {
-  //   path: RoutesPathName.SIGNUP_PAGE,
-  //   element: <Register />,
-  // },
-  // {
-  //   path: RoutesPathName.LOGIN_PAGE,
-  //   element: <Login />,
-  // },
-  // {
-  //   path: RoutesPathName.LoginOTPVerification_Page,
-  //   element: <LoginOTPVerification />,
-  // },
+  {
+    path: RoutesPathName.SIGNUP_PAGE,
+    element: <Register />,
+  },
+  {
+    path: RoutesPathName.LOGIN_PAGE,
+    element: <Login />,
+  },
+  {
+    path: RoutesPathName.LoginOTPVerification_Page,
+    element: <LoginOTPVerification />,
+  },
 {
   path:'',
   element: <Inventory />
