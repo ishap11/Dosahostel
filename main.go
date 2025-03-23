@@ -21,6 +21,7 @@ var km *kafkamanager.KafkaManager
 func main() {
 	// Initialize database
 	db.InitDB()
+	db.InitializeRedisClient()
 	fmt.Print("jai shree ram \n")
 
 	// Initialize router

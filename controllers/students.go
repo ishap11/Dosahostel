@@ -96,6 +96,7 @@ func StudentLogin(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate JWT token"})
 		return
 	}
+	utils.GenerateAndSendOTP(admin.Email)
 
 	c.JSON(http.StatusOK, gin.H{"Status": "Login successful", "token": jwtToken})
 }
