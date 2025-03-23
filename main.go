@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	db "github.com/adityjoshi/Dosahostel/database"
-	kafkamanager "github.com/adityjoshi/Dosahostel/kafkamanager"
+	kafkamanager "github.com/adityjoshi/Dosahostel/kafka/manager"
 	"github.com/adityjoshi/Dosahostel/routes"
 	"github.com/gin-gonic/gin"
 )
