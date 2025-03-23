@@ -21,6 +21,9 @@ WORKDIR /app
 # Copy the built binary from the builder image
 COPY --from=builder /app/auth-service .
 
+RUN apt-get update && apt-get install -y ca-certificates
+
+
 # Expose the port the app will listen on
 EXPOSE 8001
 

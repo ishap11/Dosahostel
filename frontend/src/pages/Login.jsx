@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role: "", //
     region: "north",
   });
   const [error, setError] = useState(null);
@@ -21,10 +19,9 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const endpoint = roleEndpoints[formData.role];
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch("http://localhost:2426/student/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -35,10 +32,8 @@ export default function LoginPage() {
 
       localStorage.setItem("jwtToken", data.token);
       localStorage.setItem("region", formData.region);
-      localStorage.setItem("role", formData.role);
 
       navigate("/verifyotp");
-      
     } catch (error) {
       setError(error.message);
     } finally {
@@ -46,18 +41,15 @@ export default function LoginPage() {
     }
   };
 
+  
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 shadow-lg rounded-lg max-w-sm w-full">
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">
-          Login
-        </h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Login</h2>
+        {error && <p style={styles.error}>{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Email</label>
             <input
               type="email"
               name="email"
@@ -65,13 +57,11 @@ export default function LoginPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              style={styles.input}
+              />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Password</label>
             <input
               type="password"
               name="password"
@@ -79,36 +69,17 @@ export default function LoginPage() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              style={styles.input}
+              />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Role
-            </label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {Object.keys(roleEndpoints).map((role) => (
-                <option key={role} value={role}>
-                  {role}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Region
-            </label>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Region</label>
             <select
               name="region"
               value={formData.region}
               onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+              style={styles.select}
+              >
               {["north", "south", "east", "west"].map((region) => (
                 <option key={region} value={region}>
                   {region.charAt(0).toUpperCase() + region.slice(1)}
@@ -119,18 +90,100 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50"
+            style={loading ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <a href="/SignUp" className="text-blue-500 font-medium hover:underline">
-            Sign Up
-          </a>
+        <p style={styles.footerText}>
+          Don't have an account?{' '}
+          <a href="/SignUp" style={styles.link}>Sign Up</a>
         </p>
       </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh",
+    backgroundColor: "#f3f4f6",
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    padding: "30px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+    maxWidth: "400px",
+    width: "100%",
+  },
+  title: {
+    fontSize: "24px",
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#1f2937",
+  },
+  inputGroup: {
+    marginBottom: "15px",
+  },
+  label: {
+    display: "block",
+    marginBottom: "5px",
+    fontSize: "14px",
+    color: "#374151",
+    fontWeight: "500",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    fontSize: "14px",
+    outline: "none",
+  },
+  select: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    fontSize: "14px",
+    outline: "none",
+  },
+  button: {
+    width: "100%",
+    padding: "12px",
+    backgroundColor: "#2563eb",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontWeight: "600",
+    fontSize: "16px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  },
+  buttonDisabled: {
+    backgroundColor: "#93c5fd",
+    cursor: "not-allowed",
+  },
+  error: {
+    color: "#dc2626",
+    fontSize: "14px",
+    textAlign: "center",
+    marginBottom: "10px",
+  },
+  footerText: {
+    textAlign: "center",
+    fontSize: "14px",
+    marginTop: "15px",
+    color: "#6b7280",
+  },
+  link: {
+    color: "#3b82f6",
+    fontWeight: "500",
+    textDecoration: "none",
+  },
+};

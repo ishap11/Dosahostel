@@ -39,13 +39,13 @@ export default function Register() {
 
     try {
       const response = await axios.post(
-        "",
+        "http://localhost:2426/student/register",
         body,
         { headers: { "Content-Type": "application/json" } }
       );
 
       if (response.status === 201) {
-        navigate("/login"); // Redirect to login on success
+        navigate("/login");
       } else {
         setError("Registration failed. Please try again.");
       }
@@ -56,18 +56,16 @@ export default function Register() {
     }
   };
 
+  
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 shadow-lg rounded-lg max-w-sm w-full">
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">
-          Sign Up
-        </h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Full Name
-            </label>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.heading}>Sign Up</h2>
+        {error && <p style={styles.error}>{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Full Name</label>
             <input
               type="text"
               name="fullName"
@@ -75,13 +73,11 @@ export default function Register() {
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={styles.input}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Email</label>
             <input
               type="email"
               name="email"
@@ -89,27 +85,23 @@ export default function Register() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={styles.input}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Business Name
-            </label>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Business Name</label>
             <input
               type="text"
-              name="fullName"
-              placeholder="Enter your full name"
+              name="businessName"
+              placeholder="Enter your business name"
               value={formData.businessName}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={styles.input}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Contact Number
-            </label>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Contact Number</label>
             <input
               type="text"
               name="contactNumber"
@@ -117,19 +109,17 @@ export default function Register() {
               value={formData.contactNumber}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={styles.input}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Region
-            </label>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Region</label>
             <select
               name="region"
               value={formData.region}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={styles.select}
             >
               <option value="">Select a region</option>
               <option value="north">North</option>
@@ -138,16 +128,14 @@ export default function Register() {
               <option value="west">West</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Gender
-            </label>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Gender</label>
             <select
               name="gender"
               value={formData.gender}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={styles.select}
             >
               <option value="">Select your gender</option>
               <option value="male">Male</option>
@@ -155,11 +143,9 @@ export default function Register() {
               <option value="other">Other</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <div className="relative">
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Password</label>
+            <div style={styles.passwordWrapper}>
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -167,12 +153,12 @@ export default function Register() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                style={styles.input}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-500"
+                style={styles.toggleButton}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -181,18 +167,115 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50"
+            style={{
+              ...styles.button,
+              ...(loading ? styles.disabledButton : {}),
+            }}
           >
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-500 font-medium hover:underline">
-            Login
-          </a>
+        <p style={styles.loginText}>
+          Already have an account?
+          <a href="/login" style={styles.loginLink}>Login</a>
         </p>
       </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
+    backgroundColor: "#f0f2f5",
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: "30px",
+    borderRadius: "10px",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+    width: "100%",
+    maxWidth: "450px",
+  },
+  heading: {
+    fontSize: "26px",
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#333",
+  },
+  inputGroup: {
+    marginBottom: "15px",
+  },
+  label: {
+    display: "block",
+    marginBottom: "6px",
+    fontSize: "14px",
+    color: "#444",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+    outline: "none",
+  },
+  select: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+    outline: "none",
+  },
+  passwordWrapper: {
+    position: "relative",
+  },
+  toggleButton: {
+    position: "absolute",
+    right: "10px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
+    color: "#555",
+  },
+  button: {
+    width: "100%",
+    padding: "12px",
+    backgroundColor: "#007bff",
+    color: "white",
+    fontWeight: "bold",
+    fontSize: "16px",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    marginTop: "10px",
+  },
+  disabledButton: {
+    opacity: 0.6,
+    cursor: "not-allowed",
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    marginBottom: "10px",
+  },
+  loginText: {
+    textAlign: "center",
+    fontSize: "14px",
+    marginTop: "15px",
+    color: "#555",
+  },
+  loginLink: {
+    color: "#007bff",
+    textDecoration: "none",
+    marginLeft: "5px",
+  },
+};

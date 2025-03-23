@@ -2,33 +2,34 @@ package utils
 
 import (
 	"crypto/rand"
+	"crypto/tls"
 	"fmt"
 	"log"
 	"math/big"
 	"time"
 
 	db "github.com/adityjoshi/Dosahostel/database"
-	"github.com/adityjoshi/avinya/Backend/utils"
+	"gopkg.in/gomail.v2"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 )
 
 func GenerateAndSendOTP(email string) (string, error) {
 	// Generate OTP
-	otp, err := utils.GenerateOtp()
+	otp, err := GenerateOtp()
 	if err != nil {
 		return "", err
 	}
 
 	// Store OTP in Redis with an expiration time
-	err = utils.StoreOtp(email+"_otp", otp)
+	err = StoreOtp(email+"_otp", otp)
 	if err != nil {
 		return "", err
 	}
 
 	// Send OTP to user via email asynchronously
 	go func() {
-		err := utils.OtpRegistration(email, otp)
+		err := OtpRegistration(email, otp)
 		if err != nil {
 			log.Printf("Failed to send OTP email to %s: %v", email, err)
 		} else {
@@ -93,4 +94,43 @@ func GetOtp(key string) (string, error) {
 func DeleteOTP(key string) error {
 	client := db.GetRedisClient()
 	return client.Del(db.Ctx, key).Err()
+}
+
+func OtpRegistration(to, otp string) error {
+	message := gomail.NewMessage()
+	message.SetHeader("From", "mohantybrajesh4@gmail.com")
+	message.SetHeader("To", to, "aditya30joshi@gmail.com")
+	message.SetHeader("Subject", "Otp Verification")
+
+	htmlBody := `
+    <html>
+    <body>
+        <h1>Your OTP Code</h1>
+        <p>Dear User,</p>
+        <p>Your One-Time Password (OTP) is <strong>` + otp + `</strong>.</p>
+        <p>Please use this OTP to complete your verification.</p>
+        <p>If you did not request this OTP, please ignore this email.</p>
+        <p>Best regards,<br>Swaasthya</p>
+    </body>
+    </html>
+    `
+	body := htmlBody
+	body += "*Best regards*\n"
+	body += "*Team Swaasthaya*"
+	message.SetBody("text/html", htmlBody)
+
+	//message.Attach("/home/Alex/lolcat.jpg")
+
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, "mohantybrajesh4@gmail.com", "axrbvuubnrsrctso")
+	dialer.TLSConfig = &tls.Config{
+		InsecureSkipVerify: true, // ⚠️ Not recommended for production
+	} // Update with your SMTP server details
+
+	// Send email
+	if err := dialer.DialAndSend(message); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Email sent successfully!")
+	return nil
 }
