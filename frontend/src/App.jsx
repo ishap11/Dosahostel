@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import LoginOTPVerification from './pages/LoginOtpPage';
 import PrivateRoute from './context/PrivateRoute';
 import MainLayout from './pages/layout/MainLayout';
+import LandingPage from './pages/landingPage';
 
 import Inventory from './pages/Inventory';
 import { RoutesPathName } from './constants';
@@ -12,6 +13,10 @@ import { RoutesPathName } from './constants';
 
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <LandingPage />,  // Landing Page should be first
+  },
   {
     path: RoutesPathName.SIGNUP_PAGE,
     element: <Register />,
