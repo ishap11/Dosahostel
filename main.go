@@ -6,6 +6,9 @@ import (
 	"net/http"
 
 	db "github.com/adityjoshi/Dosahostel/database"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 
 	"github.com/adityjoshi/Dosahostel/kafka/consumer"
 	kafkamanager "github.com/adityjoshi/Dosahostel/kafka/manager"
@@ -70,6 +73,24 @@ func main() {
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
+}
+
+func setupCORS() gin.HandlerFunc {
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{
+		"http://localhost:5173",
+	}
+	config.AllowHeaders = []string{"Authorization", "Content-Type", "credentials", "region"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"} // Allow OPTIONS
+	config.AllowHeaders = append(config.AllowHeaders, "Authorization", "Content-Type", "credentials", "region")
+	config.AllowCredentials = true
+	return cors.New(config)
+}
+
+// setupSessions configures session management
+func setupSessions(router *gin.Engine) {
+	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("session", store))
 }
 
 func setupRouter(router *gin.Engine) {
