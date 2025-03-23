@@ -5,25 +5,21 @@ package manager
 import (
 	"fmt"
 	"log"
+
+	"github.com/adityjoshi/Dosahostel/kafka/consumer"
 )
 
 func StartConsumer(region string) {
 	kafkaBroker := "kafka-broker:9092"
 	var topic = []string{
-		"hospital_admin",
-		"hospital_registration",
-		"hospital_staff",
-		"patient_registration",
-		"patient_Admit",
-		"patient_admission",
-		"appointment_reg",
+		"inventory",
 
 		// Add other topics as necessary
 	}
 	switch region {
 	case "north":
 		//topic := "hospital_admin"
-		northConsumer, err := NewNorthConsumer(kafkaBroker, topic)
+		northConsumer, err := consumer.NewNorthConsumer(kafkaBroker, topic)
 		if err != nil {
 			log.Fatalf("Failed to create north consumer: %v", err)
 		}

@@ -6,10 +6,13 @@ import (
 	"net/http"
 
 	db "github.com/adityjoshi/Dosahostel/database"
+
 	kafkamanager "github.com/adityjoshi/Dosahostel/kafka/manager"
 	"github.com/adityjoshi/Dosahostel/routes"
 	"github.com/gin-gonic/gin"
 )
+
+var km *kafkamanager.KafkaManager
 
 func main() {
 
@@ -37,7 +40,7 @@ func main() {
 	for _, region := range regions {
 		go func(r string) {
 			log.Printf("Starting Kafka consumer for region: %s\n", r)
-			consumer.StartConsumer(r)
+			kafkamanager.StartConsumer(r)
 		}(region)
 	}
 	server := &http.Server{
@@ -53,5 +56,5 @@ func main() {
 }
 
 func setupRouter(router *gin.Engine) {
-	routes.StudentRoutes(router)
+	routes.StudentRoutes(router, km)
 }

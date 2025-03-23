@@ -167,7 +167,7 @@ func processMessage(msg *sarama.ConsumerMessage) error {
 	log.Printf("Processing message: %s \n", string(msg.Value))
 
 	// Process the Inventory message
-	if msg.Topic == "Inventory" {
+	if msg.Topic == "inventory" {
 		var inventory models.Inventory
 		if err := json.Unmarshal(msg.Value, &inventory); err != nil {
 			log.Printf("Failed to unmarshal inventory message: %v", err)
