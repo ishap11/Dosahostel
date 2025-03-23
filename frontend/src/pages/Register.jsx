@@ -12,7 +12,7 @@ export default function Register() {
     email: "",
     password: "",
     region: "",
-    userType: "Buyer"
+    userType: "Buyer",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -38,11 +38,9 @@ export default function Register() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:2426/student/register",
-        body,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const response = await axios.post("http://localhost:2426/student/register", body, {
+        headers: { "Content-Type": "application/json" },
+      });
 
       if (response.status === 201) {
         navigate("/login");
@@ -56,128 +54,75 @@ export default function Register() {
     }
   };
 
-  
-
   return (
     <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.heading}>Sign Up</h2>
+      <div style={styles.cardWrapper}>
+        <div style={styles.headerSection}>
+          <h2 style={styles.heading}>Create Your Account</h2>
+          <p style={styles.subText}>Start managing your inventories like a pro!</p>
+        </div>
         {error && <p style={styles.error}>{error}</p>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Enter your full name"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
+            <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} style={styles.input} placeholder="e.g. John Doe" required />
           </div>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
+
+          <div style={styles.flexRow}>
+            <div style={{ ...styles.inputGroup, marginRight: "10px" }}>
+              <label style={styles.label}>Gender</label>
+              <select name="gender" value={formData.gender} onChange={handleChange} style={styles.select} required>
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Region</label>
+              <select name="region" value={formData.region} onChange={handleChange} style={styles.select} required>
+                <option value="">Select</option>
+                <option value="north">North</option>
+                <option value="south">South</option>
+                <option value="east">East</option>
+                <option value="west">West</option>
+              </select>
+            </div>
           </div>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Business Name</label>
-            <input
-              type="text"
-              name="businessName"
-              placeholder="Enter your business name"
-              value={formData.businessName}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-          </div>
+
           <div style={styles.inputGroup}>
             <label style={styles.label}>Contact Number</label>
-            <input
-              type="text"
-              name="contactNumber"
-              placeholder="Enter your contact number"
-              value={formData.contactNumber}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
+            <input type="text" name="contactNumber" value={formData.contactNumber} onChange={handleChange} style={styles.input} placeholder="e.g. +91 98765XXXXX" required />
           </div>
+
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Region</label>
-            <select
-              name="region"
-              value={formData.region}
-              onChange={handleChange}
-              required
-              style={styles.select}
-            >
-              <option value="">Select a region</option>
-              <option value="north">North</option>
-              <option value="south">South</option>
-              <option value="east">East</option>
-              <option value="west">West</option>
-            </select>
+            <label style={styles.label}>Business Name</label>
+            <input type="text" name="businessName" value={formData.businessName} onChange={handleChange} style={styles.input} placeholder="e.g. ABC Traders" required />
           </div>
+
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Gender</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              required
-              style={styles.select}
-            >
-              <option value="">Select your gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+            <label style={styles.label}>Email</label>
+            <input type="email" name="email" value={formData.email} onChange={handleChange} style={styles.input} placeholder="example@email.com" required />
           </div>
+
           <div style={styles.inputGroup}>
             <label style={styles.label}>Password</label>
             <div style={styles.passwordWrapper}>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                style={styles.input}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                style={styles.toggleButton}
-              >
+              <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} style={styles.input} placeholder="Choose a strong password" required />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              ...styles.button,
-              ...(loading ? styles.disabledButton : {}),
-            }}
-          >
-            {loading ? "Signing Up..." : "Sign Up"}
+
+          <button type="submit" disabled={loading} style={{ ...styles.button, ...(loading ? styles.disabledButton : {}) }}>
+            {loading ? "Signing Up..." : "Register Now"}
           </button>
         </form>
+
         <p style={styles.loginText}>
-          Already have an account?
-          <a href="/login" style={styles.loginLink}>Login</a>
+          Already registered?
+          <a href="/login" style={styles.loginLink}> Login here</a>
         </p>
       </div>
     </div>
@@ -190,92 +135,109 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     minHeight: "100vh",
-    backgroundColor: "#f0f2f5",
+    background: "linear-gradient(135deg, #f2f7ff, #dce3f0)",
+    padding: "20px",
   },
-  card: {
+  cardWrapper: {
     backgroundColor: "#fff",
-    padding: "30px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+    borderRadius: "20px",
+    padding: "40px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
     width: "100%",
-    maxWidth: "450px",
+    maxWidth: "600px",
+  },
+  headerSection: {
+    textAlign: "center",
+    marginBottom: "25px",
   },
   heading: {
-    fontSize: "26px",
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: "20px",
-    color: "#333",
+    fontSize: "28px",
+    fontWeight: 700,
+    color: "#1a1a1a",
+  },
+  subText: {
+    fontSize: "14px",
+    color: "#777",
+  },
+  form: {
+    width: "100%",
   },
   inputGroup: {
-    marginBottom: "15px",
+    marginBottom: "18px",
   },
   label: {
-    display: "block",
-    marginBottom: "6px",
     fontSize: "14px",
-    color: "#444",
+    marginBottom: "6px",
+    color: "#333",
+    display: "block",
   },
   input: {
     width: "100%",
-    padding: "10px",
-    borderRadius: "8px",
+    padding: "12px",
+    borderRadius: "10px",
     border: "1px solid #ccc",
     fontSize: "14px",
-    outline: "none",
+    transition: "border 0.3s ease",
   },
   select: {
     width: "100%",
-    padding: "10px",
-    borderRadius: "8px",
+    padding: "12px",
+    borderRadius: "10px",
     border: "1px solid #ccc",
     fontSize: "14px",
-    outline: "none",
   },
   passwordWrapper: {
     position: "relative",
   },
   toggleButton: {
     position: "absolute",
-    right: "10px",
     top: "50%",
+    right: "10px",
     transform: "translateY(-50%)",
-    background: "none",
+    background: "transparent",
     border: "none",
-    cursor: "pointer",
     fontSize: "16px",
-    color: "#555",
+    cursor: "pointer",
   },
   button: {
     width: "100%",
-    padding: "12px",
-    backgroundColor: "#007bff",
+    backgroundColor: "#0056d2",
     color: "white",
-    fontWeight: "bold",
+    padding: "14px",
     fontSize: "16px",
+    fontWeight: 600,
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "10px",
     cursor: "pointer",
     marginTop: "10px",
+    transition: "background-color 0.3s ease",
   },
   disabledButton: {
-    opacity: 0.6,
+    backgroundColor: "#a5b6d2",
     cursor: "not-allowed",
   },
-  error: {
-    color: "red",
-    textAlign: "center",
-    marginBottom: "10px",
-  },
   loginText: {
+    marginTop: "20px",
     textAlign: "center",
     fontSize: "14px",
-    marginTop: "15px",
     color: "#555",
   },
   loginLink: {
-    color: "#007bff",
+    color: "#0056d2",
     textDecoration: "none",
-    marginLeft: "5px",
+    fontWeight: 600,
+    marginLeft: "6px",
+  },
+  error: {
+    backgroundColor: "#ffe0e0",
+    color: "#d8000c",
+    padding: "10px",
+    borderRadius: "8px",
+    marginBottom: "15px",
+    textAlign: "center",
+  },
+  flexRow: {
+    display: "flex",
+    justifyContent: "space-between",
   },
 };

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ export default function LoginPage() {
     password: "",
     region: "north",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -26,8 +28,8 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
 
+      const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Login failed");
 
       localStorage.setItem("jwtToken", data.token);
@@ -41,45 +43,49 @@ export default function LoginPage() {
     }
   };
 
-  
   return (
     <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Login</h2>
+      <div style={styles.cardWrapper}>
+        <div style={styles.headerSection}>
+          <h2 style={styles.heading}>Welcome Back!</h2>
+          <p style={styles.subText}>Login to access your dashboard</p>
+        </div>
         {error && <p style={styles.error}>{error}</p>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Email</label>
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              required
               style={styles.input}
-              />
+              placeholder="example@email.com"
+              required
+            />
           </div>
+
           <div style={styles.inputGroup}>
             <label style={styles.label}>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              style={styles.input}
+            <div style={styles.passwordWrapper}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                style={styles.input}
+                placeholder="Enter your password"
+                required
               />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
+
           <div style={styles.inputGroup}>
             <label style={styles.label}>Region</label>
-            <select
-              name="region"
-              value={formData.region}
-              onChange={handleChange}
-              style={styles.select}
-              >
+            <select name="region" value={formData.region} onChange={handleChange} style={styles.select}>
               {["north", "south", "east", "west"].map((region) => (
                 <option key={region} value={region}>
                   {region.charAt(0).toUpperCase() + region.slice(1)}
@@ -87,17 +93,19 @@ export default function LoginPage() {
               ))}
             </select>
           </div>
+
           <button
             type="submit"
             disabled={loading}
-            style={loading ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
+            style={{ ...styles.button, ...(loading ? styles.disabledButton : {}) }}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p style={styles.footerText}>
-          Don't have an account?{' '}
-          <a href="/SignUp" style={styles.link}>Sign Up</a>
+
+        <p style={styles.registerText}>
+          Don't have an account?
+          <a href="/SignUp" style={styles.registerLink}> Register here</a>
         </p>
       </div>
     </div>
@@ -107,83 +115,108 @@ export default function LoginPage() {
 const styles = {
   container: {
     display: "flex",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     minHeight: "100vh",
-    backgroundColor: "#f3f4f6",
+    background: "linear-gradient(135deg, #f2f7ff, #dce3f0)",
+    padding: "20px",
   },
-  card: {
-    backgroundColor: "#ffffff",
-    padding: "30px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-    maxWidth: "400px",
+  cardWrapper: {
+    backgroundColor: "#fff",
+    borderRadius: "20px",
+    padding: "40px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+    width: "100%",
+    maxWidth: "500px",
+  },
+  headerSection: {
+    textAlign: "center",
+    marginBottom: "25px",
+  },
+  heading: {
+    fontSize: "28px",
+    fontWeight: 700,
+    color: "#1a1a1a",
+  },
+  subText: {
+    fontSize: "14px",
+    color: "#777",
+  },
+  form: {
     width: "100%",
   },
-  title: {
-    fontSize: "24px",
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: "20px",
-    color: "#1f2937",
-  },
   inputGroup: {
-    marginBottom: "15px",
+    marginBottom: "18px",
   },
   label: {
-    display: "block",
-    marginBottom: "5px",
     fontSize: "14px",
-    color: "#374151",
-    fontWeight: "500",
+    marginBottom: "6px",
+    color: "#333",
+    display: "block",
   },
   input: {
     width: "100%",
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #d1d5db",
+    padding: "12px",
+    borderRadius: "10px",
+    border: "1px solid #ccc",
     fontSize: "14px",
-    outline: "none",
+    transition: "border 0.3s ease",
   },
   select: {
     width: "100%",
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #d1d5db",
+    padding: "12px",
+    borderRadius: "10px",
+    border: "1px solid #ccc",
     fontSize: "14px",
-    outline: "none",
+  },
+  passwordWrapper: {
+    position: "relative",
+  },
+  toggleButton: {
+    position: "absolute",
+    top: "50%",
+    right: "10px",
+    transform: "translateY(-50%)",
+    background: "transparent",
+    border: "none",
+    fontSize: "16px",
+    cursor: "pointer",
   },
   button: {
     width: "100%",
-    padding: "12px",
-    backgroundColor: "#2563eb",
+    backgroundColor: "#0056d2",
     color: "white",
-    border: "none",
-    borderRadius: "8px",
-    fontWeight: "600",
+    padding: "14px",
     fontSize: "16px",
+    fontWeight: 600,
+    border: "none",
+    borderRadius: "10px",
     cursor: "pointer",
+    marginTop: "10px",
     transition: "background-color 0.3s ease",
   },
-  buttonDisabled: {
-    backgroundColor: "#93c5fd",
+  disabledButton: {
+    backgroundColor: "#a5b6d2",
     cursor: "not-allowed",
   },
-  error: {
-    color: "#dc2626",
-    fontSize: "14px",
-    textAlign: "center",
-    marginBottom: "10px",
-  },
-  footerText: {
+  registerText: {
+    marginTop: "20px",
     textAlign: "center",
     fontSize: "14px",
-    marginTop: "15px",
-    color: "#6b7280",
+    color: "#555",
   },
-  link: {
-    color: "#3b82f6",
-    fontWeight: "500",
+  registerLink: {
+    color: "#0056d2",
     textDecoration: "none",
+    fontWeight: 600,
+    marginLeft: "6px",
+  },
+  error: {
+    backgroundColor: "#ffe0e0",
+    color: "#d8000c",
+    padding: "10px",
+    borderRadius: "8px",
+    marginBottom: "15px",
+    textAlign: "center",
   },
 };
