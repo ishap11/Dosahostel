@@ -48,6 +48,7 @@ func BusinessAdminReg(c *gin.Context) {
 		ContactNumber: admin.ContactNumber,
 		Email:         admin.Email,
 		Password:      admin.Password,
+		GSTNumber:     admin.GSTNumber,
 		BusinessName:  admin.BusinessName,
 		Region:        admin.Region,
 		User_type:     models.Buyer,
@@ -159,4 +160,70 @@ func VerifyAdminOTP(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "region": regionStr})
+}
+
+func GetBusinessAdmin(c *gin.Context) {
+	// Fetch the admin ID from the URL parameter
+
+	// Validate if adminID is provided
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+		return
+	}
+
+	// Decode token to extract student details
+	claims, err := utils.DecodeStudentJWT(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	// Check if the token contains valid user claims
+	userClaims, ok := claims["user"].(map[string]interface{})
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token structure"})
+		return
+	}
+
+	// Check if user_id is present and valid in the token
+	adminID, ok := userClaims["user_id"].(float64)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user_id in token"})
+		return
+	}
+
+	// Check if region is available in the token
+	region, ok := userClaims["region"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid region in token"})
+		return
+	}
+
+	// Fetch the database connection for the region
+	database, err := db.GetDB(region)
+	if err != nil || database == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error or invalid region"})
+		return
+	}
+
+	// Fetch admin details from the database using the provided adminID
+	var admin models.Users
+	if err := database.Where("id = ?", adminID).First(&admin).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Admin not found"})
+		return
+	}
+
+	// Return the admin details as a JSON response
+	c.JSON(http.StatusOK, gin.H{
+		"admin_id":       admin.ID,
+		"full_name":      admin.Full_Name,
+		"gender_info":    admin.GenderInfo,
+		"contact_number": admin.ContactNumber,
+		"business_name":  admin.BusinessName,
+		"email":          admin.Email,
+		"gst_number":     admin.GSTNumber,
+		"user_type":      admin.User_type,
+		"region":         admin.Region,
+	})
 }

@@ -24,6 +24,7 @@ type Users struct {
 	ContactNumber string   `json:"ContactNumber" gorm:"not null"`
 	BusinessName  string   `gorm:"not null" json:"business_name"`
 	Email         string   `json:"Email" gorm:"not null;unique"`
+	GSTNumber     string   `gorm:"unique;not null" json:"gst_number"`
 	Password      string   `json:"Password"`
 	Region        string   `json:"region"`
 	User_type     UserType `json:"User_type"`
@@ -50,12 +51,15 @@ type Complaint struct {
 	ContactDetails string        `gorm:"not null" json:"contact_details"`
 }
 type Inventory struct {
-	ProductID    uint   `gorm:"primaryKey" json:"product_id"`
-	AdminID      uint   `gorm:"not null" json:"admin_id"`
-	BusinessName string `gorm:"not null" json:"business_name"`
-	GSTNumber    string `gorm:"unique;not null" json:"gst_number"`
-	ProductName  string `gorm:"not null" json:"product_name"`
-	Quantity     int    `gorm:"not null" json:"quantity"`
+	ProductID    uint      `gorm:"primaryKey" json:"product_id"`
+	AdminID      uint      `gorm:"not null" json:"admin_id"`
+	BusinessName string    `gorm:"not null" json:"business_name"`
+	GSTNumber    string    `gorm:"unique;not null" json:"gst_number"`
+	ProductName  string    `gorm:"not null" json:"product_name"`
+	Price        uint      `gorm:"not null" json:"price"`
+	Time         time.Time `gorm:"autoCreateTime" json:"time"`
+	Quantity     int       `gorm:"not null" json:"quantity"`
+	TotalPrice   int       `gorm:"not null" json:"total_price"`
 }
 
 // Invoice struct

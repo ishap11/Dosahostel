@@ -22,4 +22,6 @@ func StudentRoutes(incomingRoutes *gin.Engine, km *kafkamanager.KafkaManager) {
 		controllers.PostComplaintKafka(c)
 	})
 	incomingRoutes.POST("/verify-otp", middleware.AuthorizeStudent(), controllers.VerifyAdminOTP)
+	incomingRoutes.GET("/getInventory", controllers.GetAllInventory)
+	incomingRoutes.GET("/getAdminDetails", controllers.GetBusinessAdmin)
 }
