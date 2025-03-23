@@ -36,6 +36,16 @@ func main() {
 		log.Fatal("Failed to initialize Kafka Manager:", err)
 	}
 
+	if km == nil {
+		log.Fatal("KafkaManager is not initialized")
+	}
+	if km.NorthProducer == nil {
+		log.Fatal("NorthProducer is not initialized")
+	}
+	if km.SouthProducer == nil {
+		log.Fatal("SouthProducer is not initialized")
+	}
+
 	regions := []string{"north", "south"}
 	for _, region := range regions {
 		go func(r string) {

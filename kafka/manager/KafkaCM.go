@@ -10,7 +10,7 @@ import (
 )
 
 func StartConsumer(region string) {
-	kafkaBroker := "kafka-broker:9092"
+	kafkaBroker := "kafka:9092"
 	var topic = []string{
 		"inventory",
 
