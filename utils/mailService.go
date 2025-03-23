@@ -120,7 +120,7 @@ func OtpRegistration(to, otp string) error {
 
 	//message.Attach("/home/Alex/lolcat.jpg")
 
-	dialer := gomail.NewDialer("smtp.gmail.com", 587, "aditya3.collegeboard@gmail.com", "ehnxaubjqelkotks") // Update with your SMTP server details
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, "mohantybrajesh4@gmail.com", "axrbvuubnrsrctso") // Update with your SMTP server details
 
 	// Send email
 	if err := dialer.DialAndSend(message); err != nil {
